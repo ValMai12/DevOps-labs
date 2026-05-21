@@ -1,19 +1,18 @@
 from flask import Flask, jsonify, request
+import pymysql
 
 app = Flask(__name__)
 
-notes = [
-    {
-        "id": 1,
-        "title": "First note",
-        "content": "Hello from mywebapp"
-    },
-    {
-        "id": 2,
-        "title": "Study DevOps",
-        "content": "Finish laboratory work"
-    }
-]
+
+def get_db_connection():
+    return pymysql.connect(
+        host="127.0.0.1",
+        user="mywebapp",
+        password="mypassword",
+        database="mywebapp",
+        port=3306,
+        cursorclass=pymysql.cursors.DictCursor
+    )
 
 
 def wants_json():
@@ -45,22 +44,31 @@ def alive():
 
 @app.route("/health/ready")
 def ready():
-    return "OK", 200
+
+    try:
+        connection = get_db_connection()
+        connection.close()
+
+        return "OK", 200
+
+    except Exception as error:
+        return f"Database error: {error}", 500
 
 
 @app.route("/notes", methods=["GET"])
 def get_notes():
 
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("SELECT id, title FROM notes")
+
+    notes = cursor.fetchall()
+
+    connection.close()
+
     if wants_json():
-        result = []
-
-        for note in notes:
-            result.append({
-                "id": note["id"],
-                "title": note["title"]
-            })
-
-        return jsonify(result)
+        return jsonify(notes)
 
     html = """
     <h1>Notes</h1>
@@ -88,22 +96,33 @@ def get_notes():
 @app.route("/notes/<int:note_id>", methods=["GET"])
 def get_note(note_id):
 
-    for note in notes:
+    connection = get_db_connection()
+    cursor = connection.cursor()
 
-        if note["id"] == note_id:
+    cursor.execute(
+        "SELECT * FROM notes WHERE id = %s",
+        (note_id,)
+    )
 
-            if wants_json():
-                return jsonify(note)
+    note = cursor.fetchone()
 
-            return f"""
-            <h1>{note["title"]}</h1>
+    connection.close()
 
-            <p><b>ID:</b> {note["id"]}</p>
+    if not note:
+        return {"error": "Note not found"}, 404
 
-            <p>{note["content"]}</p>
-            """
+    if wants_json():
+        return jsonify(note)
 
-    return {"error": "Note not found"}, 404
+    return f"""
+    <h1>{note["title"]}</h1>
+
+    <p><b>ID:</b> {note["id"]}</p>
+
+    <p><b>Created at:</b> {note["created_at"]}</p>
+
+    <p>{note["content"]}</p>
+    """
 
 
 @app.route("/notes", methods=["POST"])
@@ -120,15 +139,28 @@ def create_note():
     if not title or not content:
         return {"error": "title and content are required"}, 400
 
-    new_note = {
-        "id": len(notes) + 1,
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    cursor.execute(
+        """
+        INSERT INTO notes (title, content)
+        VALUES (%s, %s)
+        """,
+        (title, content)
+    )
+
+    connection.commit()
+
+    note_id = cursor.lastrowid
+
+    connection.close()
+
+    return jsonify({
+        "id": note_id,
         "title": title,
         "content": content
-    }
-
-    notes.append(new_note)
-
-    return jsonify(new_note), 201
+    }), 201
 
 
 app.run(host="127.0.0.1", port=3000)
