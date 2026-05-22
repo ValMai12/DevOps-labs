@@ -1,0 +1,15 @@
+[Unit]
+Description=mywebapp Notes Service
+After=network.target mariadb.service
+Requires=mariadb.service
+
+[Service]
+User=app
+Group=app
+WorkingDirectory=/opt/mywebapp
+ExecStartPre=/opt/mywebapp/venv/bin/python /opt/mywebapp/migrate.py --db-user mywebapp --db-password mypassword --db-name mywebapp
+ExecStart=/opt/mywebapp/venv/bin/python /opt/mywebapp/app.py --host 127.0.0.1 --port 3000 --db-user mywebapp --db-password mypassword --db-name mywebapp
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
