@@ -16,7 +16,7 @@ apt install -y python3 python3-venv python3-pip mariadb-server nginx sudo
 echo "Creating users..."
 id -u student >/dev/null 2>&1 || useradd -m -s /bin/bash student
 id -u teacher >/dev/null 2>&1 || useradd -m -s /bin/bash teacher
-id -u operator >/dev/null 2>&1 || useradd -m -s /bin/bash operator
+id -u operator >/dev/null 2>&1 || useradd -m -s /bin/bash -g users operator
 id -u app >/dev/null 2>&1 || useradd --system --home "$APP_DIR" --shell /usr/sbin/nologin app
 
 echo "Setting default passwords..."
