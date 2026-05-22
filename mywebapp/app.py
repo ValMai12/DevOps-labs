@@ -165,26 +165,37 @@ def create_note():
     }), 201
 
 
-parser = argparse.ArgumentParser()
+def load_config():
+    parser = argparse.ArgumentParser()
 
-parser.add_argument("--host", default="127.0.0.1")
-parser.add_argument("--port", type=int, default=3000)
+    parser.add_argument("--host", default="127.0.0.1")
+    parser.add_argument("--port", type=int, default=3000)
 
-parser.add_argument("--db-host", default="127.0.0.1")
-parser.add_argument("--db-port", type=int, default=3306)
-parser.add_argument("--db-user", required=True)
-parser.add_argument("--db-password", required=True)
-parser.add_argument("--db-name", required=True)
+    parser.add_argument("--db-host", default="127.0.0.1")
+    parser.add_argument("--db-port", type=int, default=3306)
+    parser.add_argument("--db-user", default=None)
+    parser.add_argument("--db-password", default=None)
+    parser.add_argument("--db-name", default=None)
 
-args = parser.parse_args()
+    args, _ = parser.parse_known_args()
 
-config["db_host"] = args.db_host
-config["db_port"] = args.db_port
-config["db_user"] = args.db_user
-config["db_password"] = args.db_password
-config["db_name"] = args.db_name
+    import os
 
-app.run(
-    host=args.host,
-    port=args.port
-)
+    config["db_host"] = args.db_host
+    config["db_port"] = args.db_port
+    config["db_user"] = args.db_user or os.getenv("MYWEBAPP_DB_USER")
+    config["db_password"] = args.db_password or os.getenv("MYWEBAPP_DB_PASSWORD")
+    config["db_name"] = args.db_name or os.getenv("MYWEBAPP_DB_NAME")
+
+    return args
+
+
+load_config()
+
+
+if __name__ == "__main__":
+    args = load_config()
+    app.run(
+        host=args.host,
+        port=args.port
+    )

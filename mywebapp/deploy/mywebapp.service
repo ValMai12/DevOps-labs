@@ -9,6 +9,9 @@ NotifyAccess=main
 User=app
 Group=app
 WorkingDirectory=/opt/mywebapp
+Environment=MYWEBAPP_DB_USER=mywebapp
+Environment=MYWEBAPP_DB_PASSWORD=mypassword
+Environment=MYWEBAPP_DB_NAME=mywebapp
 ExecStartPre=/opt/mywebapp/venv/bin/python /opt/mywebapp/migrate.py --db-user mywebapp --db-password mypassword --db-name mywebapp
 ExecStart=/opt/mywebapp/venv/bin/gunicorn app:app
 Restart=always
