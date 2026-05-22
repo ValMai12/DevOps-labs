@@ -83,6 +83,8 @@ python3 app.py \
   --db-password mypassword \
   --db-name mywebapp
 
+  (example password for testing)
+
 Application listens on:
 127.0.0.1:3000
 Deployment
@@ -131,3 +133,6 @@ Check service status:
 systemctl status mywebapp
 Check nginx status:
 systemctl status nginx
+
+Repository:
+https://github.com/ValMai12/DevOps-labs
