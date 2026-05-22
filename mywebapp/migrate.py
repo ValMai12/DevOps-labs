@@ -1,12 +1,25 @@
+import argparse
 import pymysql
 
 
+parser = argparse.ArgumentParser()
+
+parser.add_argument("--db-host", default="127.0.0.1")
+parser.add_argument("--db-port", type=int, default=3306)
+
+parser.add_argument("--db-user", required=True)
+parser.add_argument("--db-password", required=True)
+parser.add_argument("--db-name", required=True)
+
+args = parser.parse_args()
+
+
 connection = pymysql.connect(
-    host="127.0.0.1",
-    user="mywebapp",
-    password="mypassword",
-    database="mywebapp",
-    port=3306
+    host=args.db_host,
+    user=args.db_user,
+    password=args.db_password,
+    database=args.db_name,
+    port=args.db_port
 )
 
 cursor = connection.cursor()
