@@ -1,16 +1,18 @@
 from flask import Flask, jsonify, request
+import argparse
 import pymysql
 
 app = Flask(__name__)
+config = {}
 
 
 def get_db_connection():
     return pymysql.connect(
-        host="127.0.0.1",
-        user="mywebapp",
-        password="mypassword",
-        database="mywebapp",
-        port=3306,
+        host=config["db_host"],
+        user=config["db_user"],
+        password=config["db_password"],
+        database=config["db_name"],
+        port=config["db_port"],
         cursorclass=pymysql.cursors.DictCursor
     )
 
@@ -163,4 +165,26 @@ def create_note():
     }), 201
 
 
-app.run(host="127.0.0.1", port=3000)
+parser = argparse.ArgumentParser()
+
+parser.add_argument("--host", default="127.0.0.1")
+parser.add_argument("--port", type=int, default=3000)
+
+parser.add_argument("--db-host", default="127.0.0.1")
+parser.add_argument("--db-port", type=int, default=3306)
+parser.add_argument("--db-user", required=True)
+parser.add_argument("--db-password", required=True)
+parser.add_argument("--db-name", required=True)
+
+args = parser.parse_args()
+
+config["db_host"] = args.db_host
+config["db_port"] = args.db_port
+config["db_user"] = args.db_user
+config["db_password"] = args.db_password
+config["db_name"] = args.db_name
+
+app.run(
+    host=args.host,
+    port=args.port
+)
