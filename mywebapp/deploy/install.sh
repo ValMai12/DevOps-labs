@@ -55,9 +55,11 @@ mysql -e "FLUSH PRIVILEGES;"
 
 echo "Installing systemd service..."
 cp "$APP_DIR/deploy/mywebapp.service" /etc/systemd/system/mywebapp.service
+cp "$APP_DIR/deploy/mywebapp.socket" /etc/systemd/system/mywebapp.socket
 
 systemctl daemon-reload
-systemctl enable mywebapp
+systemctl enable mywebapp.socket
+systemctl start mywebapp.socket
 systemctl restart mywebapp
 
 echo "Configuring nginx..."

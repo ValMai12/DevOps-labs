@@ -1,7 +1,7 @@
 [Unit]
 Description=mywebapp Notes Service
-After=network.target mariadb.service
-Requires=mariadb.service
+After=network.target mariadb.service mywebapp.socket
+Requires=mariadb.service mywebapp.socket
 
 [Service]
 User=app
