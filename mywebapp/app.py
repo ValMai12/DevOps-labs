@@ -171,7 +171,7 @@ def load_config():
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=3000)
 
-    parser.add_argument("--db-host", default="127.0.0.1")
+    parser.add_argument("--db-host", default=None)
     parser.add_argument("--db-port", type=int, default=3306)
     parser.add_argument("--db-user", default=None)
     parser.add_argument("--db-password", default=None)
@@ -181,7 +181,7 @@ def load_config():
 
     import os
 
-    config["db_host"] = args.db_host
+    config["db_host"] = args.db_host or os.getenv("MYWEBAPP_DB_HOST")
     config["db_port"] = args.db_port
     config["db_user"] = args.db_user or os.getenv("MYWEBAPP_DB_USER")
     config["db_password"] = args.db_password or os.getenv("MYWEBAPP_DB_PASSWORD")
