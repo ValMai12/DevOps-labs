@@ -9,7 +9,7 @@
 Маєвська Валерія Олександрівна ІМ-41
 
 Репозиторій:
-https://github.com/ValMai12/DevOps-labs
+https://github.com/ValMai12/DevOps-labs/tree/lab2
 
 ---
 
