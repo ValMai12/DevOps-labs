@@ -438,6 +438,14 @@ docker images go-fizzbuzz:multistage
 
 Це дозволило дуже сильно зменшити розмір image.
 
+Проте scratch image має і недоліки:
+- відсутній shell
+- відсутні системні утиліти
+- складніше виконувати debugging контейнера
+- складніше аналізувати runtime проблеми
+
+Такі image добре підходять для production deployment, але менш зручні для діагностики.
+
 ---
 
 # Експеримент 3 — Distroless image
@@ -487,7 +495,7 @@ Distroless image був трохи більшим за scratch image, але з�
 - мінімальний runtime environment
 - менша attack surface
 - краща безпека
-- зручніший runtime environment у порівнянні зі scratch
+- distroless image є практичнішим для production runtime у порівнянні зі scratch
 
 ---
 
