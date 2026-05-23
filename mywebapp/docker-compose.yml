@@ -23,8 +23,12 @@ services:
       MYWEBAPP_DB_PASSWORD: mypassword
       MYWEBAPP_DB_NAME: mywebapp
     command: >
-      sh -c "python migrate.py --db-user mywebapp --db-password mypassword --db-name mywebapp &&
-             gunicorn --bind 0.0.0.0:3000 app:app"
+  sh -c "until python -c 'import pymysql; pymysql.connect(host=\"db\", user=\"mywebapp\", password=\"mypassword\", database=\"mywebapp\")'; do
+           echo 'Waiting for database...';
+           sleep 2;
+         done;
+         python migrate.py --db-user mywebapp --db-password mypassword --db-name mywebapp &&
+         gunicorn --bind 0.0.0.0:3000 app:app"
     networks:
       - mywebapp_network
 
