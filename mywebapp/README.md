@@ -1,8 +1,10 @@
 # mywebapp
 
-Laboratory work 1: Web service deployment with automation.
+Laboratory work №1: Web service deployment with automation.
 
-## Variant
+---
+
+# Variant
 
 N = 12
 
@@ -21,11 +23,11 @@ Result:
 
 ---
 
-## Application
+# Application
 
 mywebapp is a simple notes service.
 
-Each note has:
+Each note contains:
 
 - id
 - title
@@ -34,46 +36,72 @@ Each note has:
 
 ---
 
-## API
+# API
 
-### GET /
+## GET /
 
 Returns an HTML page with the list of available business endpoints.
 
-### GET /health/alive
+---
+
+## GET /health/alive
 
 Always returns:
 
 ```text
 OK
+with HTTP 200.
 GET /health/ready
-Returns HTTP 200 if the application can connect to the database.
+Returns:
+OK
+with HTTP 200 if the application can connect to the database.
+Returns HTTP 500 if the database connection is unavailable.
 GET /notes
-Returns list of notes.
-Supports:
+Returns the list of notes.
+Supported formats:
 text/html
 application/json
+Example JSON response:
+[
+  {
+    "id": 1,
+    "title": "First note"
+  }
+]
 POST /notes
 Creates a new note.
-Example JSON body:
+Example request:
 {
+  "title": "My note",
+  "content": "Hello"
+}
+Example response:
+{
+  "id": 1,
   "title": "My note",
   "content": "Hello"
 }
 GET /notes/<id>
 Returns full note information.
-Supports:
+Supported formats:
 text/html
 application/json
+Example JSON response:
+{
+  "id": 1,
+  "title": "My note",
+  "content": "Hello",
+  "created_at": "2026-05-22 18:10:14"
+}
 Local Development
-Install dependencies:
+Install dependencies
 pip install -r requirements.txt
-Run database migration:
+Run database migration
 python3 migrate.py \
   --db-user mywebapp \
   --db-password mypassword \
   --db-name mywebapp
-Run application:
+Run application
 python3 app.py \
   --db-user mywebapp \
   --db-password mypassword \
@@ -81,11 +109,12 @@ python3 app.py \
 Application listens on:
 127.0.0.1:3000
 
- Deployment
+Deployment
 Virtual Machine
 The application was tested on:
 Ubuntu Server 26.04 ARM64
-UTM virtual machine on Apple Silicon MacBook
+UTM virtual machine
+Apple Silicon MacBook
 Recommended VM configuration:
 1 CPU core
 4 GB RAM
@@ -93,31 +122,73 @@ Recommended VM configuration:
 Recommended OS:
 Ubuntu Server 24.04 LTS
 VM Login
-Login user:
+Main user:
 student
 The deployment script creates additional users:
 teacher
 operator
 app
-Default password for teacher and operator:
+Default password for:
+teacher
+operator
 12345678
+Passwords must be changed after the first login.
 Clone Repository
 git clone https://github.com/ValMai12/DevOps-labs.git
 cd DevOps-labs/mywebapp
 git checkout lab1
+
 Run Deployment
+Run from the mywebapp directory:
 sudo ./deploy/install.sh
+The deployment script automatically:
+installs required packages
+creates Linux users
+configures MariaDB
+creates the database
+installs Python dependencies
+installs systemd service
+installs systemd socket
+configures nginx reverse proxy
+creates /home/student/gradebook
+starts all required services
 Verify Deployment
+Check application service:
 systemctl status mywebapp
+Check nginx:
 systemctl status nginx
+Check root endpoint:
 curl http://127.0.0.1/
+Check notes endpoint:
 curl http://127.0.0.1/notes
+Check JSON response:
 curl -H "Accept: application/json" http://127.0.0.1/notes
-Create Note
+Create note:
 curl -X POST http://127.0.0.1/notes \
   -H "Content-Type: application/json" \
   -d '{"title":"Test note","content":"Hello"}'
+Reverse Proxy
+Nginx works as a reverse proxy.
+Publicly available endpoints:
+/
+/notes
+/notes/<id>
+Health endpoints are not exposed through nginx.
+Database
+Database:
+MariaDB
+Database listens only on localhost.
+Systemd
+Application files:
+deploy/mywebapp.service
+deploy/mywebapp.socket
+The application:
+runs as Linux user app
+automatically performs database migration before startup
+uses systemd socket activation
+runs through Gunicorn
 Deployment Files
+Project deployment files:
 deploy/install.sh
 deploy/mywebapp.service
 deploy/mywebapp.socket
@@ -128,9 +199,13 @@ student
 teacher
 operator
 app
-The deployment script also creates:
+Operator user is allowed to execute only:
+status/restart/start/stop mywebapp
+reload nginx
+Gradebook
+The deployment script creates:
 /home/student/gradebook
-with value:
+File content:
 12
 Repository
 Repository URL:
