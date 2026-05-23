@@ -8,7 +8,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY app.py .
 COPY migrate.py .
+COPY docker-entrypoint.sh .
+
+RUN chmod +x docker-entrypoint.sh
 
 EXPOSE 3000
 
-CMD ["gunicorn", "--bind", "0.0.0.0:3000", "app:app"]
+CMD ["./docker-entrypoint.sh"]
