@@ -50,6 +50,8 @@ Always returns:
 
 ```text
 OK
+```
+
 with HTTP 200.
 
 
