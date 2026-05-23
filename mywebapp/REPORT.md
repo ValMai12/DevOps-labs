@@ -62,6 +62,13 @@ EXPOSE 8000
 CMD ["python", "-m", "spaceship.main"]
 ```
 
+### Команди для відтворення
+
+```bash
+time docker build -f Dockerfile.bad -t spaceship-python:bad .
+docker images spaceship-python:bad
+```
+
 ## Результати
 
 Перша збірка:
@@ -104,6 +111,12 @@ COPY . .
 EXPOSE 8000
 
 CMD ["python", "-m", "spaceship.main"]
+```
+### Команди для відтворення
+
+```bash
+time docker build -f Dockerfile.good -t spaceship-python:good .
+docker images spaceship-python:good
 ```
 
 ## Результати
@@ -148,6 +161,13 @@ COPY . .
 EXPOSE 8000
 
 CMD ["python", "-m", "spaceship.main"]
+```
+
+### Команди для відтворення
+
+```bash
+time docker build -f Dockerfile.alpine -t spaceship-python:alpine .
+docker images spaceship-python:alpine
 ```
 
 ## Результати
@@ -206,6 +226,18 @@ Endpoint:
 Debian-based image забезпечує:
 - кращу сумісність
 - простішу роботу із залежностями
+
+## Dependency pinning
+
+Для максимально відтворюваних build рекомендується використовувати pinned dependencies.
+
+У Python-проєктах це можна реалізувати через:
+- pip freeze
+- requirements.txt із фіксованими версіями
+- poetry.lock
+- pip-tools
+
+У межах лабораторної роботи використовувався requirements/backend.in, проте для production deployment доцільно фіксувати точні версії всіх залежностей.
 
 ---
 
@@ -328,6 +360,13 @@ EXPOSE 8080
 CMD ["./app", "serve"]
 ```
 
+### Команди для відтворення
+
+```bash
+time docker build -f Dockerfile.basic -t go-fizzbuzz:basic .
+docker images go-fizzbuzz:basic
+```
+
 ## Результати
 
 - Час збірки: ~4 хвилини 46 секунд
@@ -371,6 +410,13 @@ COPY --from=builder /app/templates /app/templates
 EXPOSE 8080
 
 CMD ["/app/app", "serve"]
+```
+
+### Команди для відтворення
+
+```bash
+time docker build -f Dockerfile.multistage -t go-fizzbuzz:multistage .
+docker images go-fizzbuzz:multistage
 ```
 
 ## Результати
@@ -418,6 +464,13 @@ COPY --from=builder /app/templates /app/templates
 EXPOSE 8080
 
 CMD ["/app/app", "serve"]
+```
+
+### Команди для відтворення
+
+```bash
+time docker build -f Dockerfile.distroless -t go-fizzbuzz:distroless .
+docker images go-fizzbuzz:distroless
 ```
 
 ## Результати
