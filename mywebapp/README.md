@@ -6,6 +6,11 @@ Laboratory work №1: Web service deployment with automation.
 
 # Variant
 
+# Student information
+
+ПІБ: 
+Маєвська Валерія Олександрівна ІМ-41
+
 N = 12
 
 Calculations:
