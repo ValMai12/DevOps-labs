@@ -1,0 +1,48 @@
+services:
+  db:
+    image: mariadb:11
+    container_name: mywebapp-db
+    environment:
+      MARIADB_DATABASE: mywebapp
+      MARIADB_USER: mywebapp
+      MARIADB_PASSWORD: mypassword
+      MARIADB_ROOT_PASSWORD: rootpassword
+    volumes:
+      - mywebapp_db_data:/var/lib/mysql
+    networks:
+      - mywebapp_network
+
+  web:
+    build: .
+    container_name: mywebapp-web
+    depends_on:
+      - db
+    environment:
+      MYWEBAPP_DB_HOST: db
+      MYWEBAPP_DB_USER: mywebapp
+      MYWEBAPP_DB_PASSWORD: mypassword
+      MYWEBAPP_DB_NAME: mywebapp
+    command: >
+      sh -c "python migrate.py --db-user mywebapp --db-password mypassword --db-name mywebapp &&
+             gunicorn --bind 0.0.0.0:3000 app:app"
+    networks:
+      - mywebapp_network
+
+  nginx:
+    image: nginx:latest
+    container_name: mywebapp-nginx
+    depends_on:
+      - web
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/mywebapp.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - mywebapp_network
+
+volumes:
+  mywebapp_db_data:
+
+networks:
+  mywebapp_network:
+    driver: bridge
