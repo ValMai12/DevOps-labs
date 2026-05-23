@@ -19,6 +19,8 @@ Result:
 - Database: MariaDB
 - Application port: 3000
 
+---
+
 ## Application
 
 mywebapp is a simple notes service.
@@ -29,6 +31,8 @@ Each note has:
 - title
 - content
 - created_at
+
+---
 
 ## API
 
@@ -42,21 +46,16 @@ Always returns:
 
 ```text
 OK
-
 GET /health/ready
-Returns OK with HTTP 200 if the application can connect to the database.
-
+Returns HTTP 200 if the application can connect to the database.
 GET /notes
 Returns list of notes.
-
 Supports:
 text/html
 application/json
-
 POST /notes
 Creates a new note.
-
-JSON example:
+Example JSON body:
 {
   "title": "My note",
   "content": "Hello"
@@ -66,73 +65,73 @@ Returns full note information.
 Supports:
 text/html
 application/json
-Local development
-
+Local Development
 Install dependencies:
 pip install -r requirements.txt
-
 Run database migration:
 python3 migrate.py \
   --db-user mywebapp \
   --db-password mypassword \
   --db-name mywebapp
-
 Run application:
 python3 app.py \
   --db-user mywebapp \
   --db-password mypassword \
   --db-name mywebapp
-
-  (example password for testing)
-
 Application listens on:
 127.0.0.1:3000
-Deployment
 
+ Deployment
+Virtual Machine
+The application was tested on:
+Ubuntu Server 26.04 ARM64
+UTM virtual machine on Apple Silicon MacBook
+Recommended VM configuration:
+1 CPU core
+4 GB RAM
+20 GB disk
 Recommended OS:
 Ubuntu Server 24.04 LTS
-
-Recommended VM resources:
-1 CPU
-2 GB RAM
-10 GB disk
-Deployment files:
+VM Login
+Login user:
+student
+The deployment script creates additional users:
+teacher
+operator
+app
+Default password for teacher and operator:
+12345678
+Clone Repository
+git clone https://github.com/ValMai12/DevOps-labs.git
+cd DevOps-labs/mywebapp
+git checkout lab1
+Run Deployment
+sudo ./deploy/install.sh
+Verify Deployment
+systemctl status mywebapp
+systemctl status nginx
+curl http://127.0.0.1/
+curl http://127.0.0.1/notes
+curl -H "Accept: application/json" http://127.0.0.1/notes
+Create Note
+curl -X POST http://127.0.0.1/notes \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Test note","content":"Hello"}'
+Deployment Files
 deploy/install.sh
 deploy/mywebapp.service
 deploy/mywebapp.socket
 deploy/mywebapp.nginx
-
-Run deployment script:
-sudo ./deploy/install.sh
-Linux users
+Linux Users
 The deployment script creates:
 student
 teacher
 operator
 app
-
-Default password for teacher and operator:
-12345678
 The deployment script also creates:
 /home/student/gradebook
 with value:
 12
-
-Testing
-Check application through nginx:
-curl http://127.0.0.1/
-curl http://127.0.0.1/notes
-curl -H "Accept: application/json" http://127.0.0.1/notes
-
-Create note:
-curl -X POST http://127.0.0.1/notes \
-  -H "Content-Type: application/json" \
-  -d '{"title":"Test note","content":"Hello"}'
-
-Check service status:
-systemctl status mywebapp
-Check nginx status:
-systemctl status nginx
-
-Repository:
+Repository
+Repository URL:
 https://github.com/ValMai12/DevOps-labs
