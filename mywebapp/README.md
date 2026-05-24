@@ -1,55 +1,62 @@
 # mywebapp
 
-Laboratory work №1: Web service deployment with automation.
+> Laboratory work №1: Web service deployment with automation.
 
 ---
 
-# Variant
+# Student Information
 
-# Student information
+| Field | Value |
+|---|---|
+| Student | Маєвська Валерія Олександрівна |
+| Group | ІМ-41 |
+| Variant Number | 12 |
 
-ПІБ: 
-Маєвська Валерія Олександрівна ІМ-41
+---
 
-N = 12
+# Variant Calculation
 
-Calculations:
+## Calculations
 
-- V2 = (12 % 2) + 1 = 1
-- V3 = (12 % 3) + 1 = 1
-- V5 = (12 % 5) + 1 = 3
+```text
+V2 = (12 % 2) + 1 = 1
+V3 = (12 % 3) + 1 = 1
+V5 = (12 % 5) + 1 = 3
+```
 
-Result:
+## Result
 
-- Web application: Notes Service
-- Configuration method: command line arguments
-- Database: MariaDB
-- Application port: 3000
+| Parameter | Value |
+|---|---|
+| Web application | Notes Service |
+| Configuration method | Command line arguments |
+| Database | MariaDB |
+| Application port | 3000 |
 
 ---
 
 # Application
 
-mywebapp is a simple notes service.
+`mywebapp` is a simple notes service.
 
 Each note contains:
 
-- id
-- title
-- content
-- created_at
+- `id`
+- `title`
+- `content`
+- `created_at`
 
 ---
 
 # API
 
-## GET /
+## `GET /`
 
 Returns an HTML page with the list of available business endpoints.
 
 ---
 
-## GET /health/alive
+## `GET /health/alive`
 
 Always returns:
 
@@ -59,215 +66,353 @@ OK
 
 with HTTP 200.
 
+---
 
-GET /health/ready
+## `GET /health/ready`
+
 Returns:
-OK
-with HTTP 200 if the application can connect to the database.
-Returns HTTP 500 if the database connection is unavailable.
 
+- `OK` with HTTP 200 if the application can connect to the database
+- HTTP 500 if the database connection is unavailable
 
-GET /notes
+---
+
+## `GET /notes`
+
 Returns the list of notes.
-Supported formats:
-text/html
-application/json
-Example JSON response:
+
+### Supported formats
+
+- `text/html`
+- `application/json`
+
+### Example JSON response
+
+```json
 [
   {
     "id": 1,
     "title": "First note"
   }
 ]
+```
 
+---
 
-POST /notes
+## `POST /notes`
+
 Creates a new note.
-Example request:
+
+### Example request
+
+```json
 {
   "title": "My note",
   "content": "Hello"
 }
-Example response:
+```
+
+### Example response
+
+```json
 {
   "id": 1,
   "title": "My note",
   "content": "Hello"
 }
+```
 
+---
 
-GET /notes/<id>
+## `GET /notes/<id>`
+
 Returns full note information.
-Supported formats:
-text/html
-application/json
-Example JSON response:
+
+### Supported formats
+
+- `text/html`
+- `application/json`
+
+### Example JSON response
+
+```json
 {
   "id": 1,
   "title": "My note",
   "content": "Hello",
   "created_at": "2026-05-22 18:10:14"
 }
+```
 
+---
 
-Local Development
+# Local Development
 
-Install dependencies
+## Install dependencies
+
+```bash
 pip install -r requirements.txt
+```
 
-Run database migration
+---
+
+## Run database migration
+
+```bash
 python3 migrate.py \
   --db-user mywebapp \
   --db-password mypassword \
   --db-name mywebapp
+```
 
-Run application
+---
+
+## Run application
+
+```bash
 python3 app.py \
   --db-user mywebapp \
   --db-password mypassword \
   --db-name mywebapp
+```
+
 Application listens on:
+
+```text
 127.0.0.1:3000
+```
 
+---
 
+# Deployment
 
-Deployment
-
-Virtual Machine
+# Virtual Machine
 
 The application was tested on:
-Ubuntu Server 26.04 ARM64
-UTM virtual machine
-Apple Silicon MacBook
 
-Recommended VM configuration:
-1 CPU core
-4 GB RAM
-20 GB disk
+- Ubuntu Server 26.04 ARM64
+- UTM virtual machine
+- Apple Silicon MacBook
 
-Recommended OS:
+## Recommended VM configuration
+
+| Resource | Value |
+|---|---|
+| CPU | 1 core |
+| RAM | 4 GB |
+| Disk | 20 GB |
+
+## Recommended OS
+
+```text
 Ubuntu Server 24.04 LTS
+```
 
+---
 
-VM Login
+# VM Login
 
-Main user:
+## Main user
+
+```text
 student
+```
 
 The deployment script creates additional users:
-teacher
-operator
-app
+
+- `teacher`
+- `operator`
+- `app`
+
+## Default password
 
 Default password for:
-teacher
-operator
-12345678
-Passwords must be changed after the first login.
 
-Clone Repository
+- `teacher`
+- `operator`
+
+```text
+12345678
+```
+
+> Passwords must be changed after the first login.
+
+---
+
+# Clone Repository
+
+```bash
 git clone https://github.com/ValMai12/DevOps-labs.git
 cd DevOps-labs/mywebapp
 git checkout lab1
+```
 
-Run Deployment
-Run from the mywebapp directory:
+---
+
+# Run Deployment
+
+Run from the `mywebapp` directory:
+
+```bash
 sudo ./deploy/install.sh
+```
 
-The deployment script automatically:
-installs required packages
-creates Linux users
-configures MariaDB
-creates the database
-installs Python dependencies
-installs systemd service
-installs systemd socket
-configures nginx reverse proxy
-creates /home/student/gradebook
-starts all required services
+## The deployment script automatically
 
+- installs required packages
+- creates Linux users
+- configures MariaDB
+- creates the database
+- installs Python dependencies
+- installs systemd service
+- installs systemd socket
+- configures nginx reverse proxy
+- creates `/home/student/gradebook`
+- starts all required services
 
-Verify Deployment
+---
 
-Check application service:
+# Verify Deployment
+
+## Check application service
+
+```bash
 systemctl status mywebapp
+```
 
-Check nginx:
+---
+
+## Check nginx
+
+```bash
 systemctl status nginx
+```
 
-Check root endpoint:
+---
+
+## Check root endpoint
+
+```bash
 curl http://127.0.0.1/
+```
 
-Check notes endpoint:
+---
+
+## Check notes endpoint
+
+```bash
 curl http://127.0.0.1/notes
+```
 
-Check JSON response:
+---
+
+## Check JSON response
+
+```bash
 curl -H "Accept: application/json" http://127.0.0.1/notes
+```
 
-Create note:
+---
+
+## Create note
+
+```bash
 curl -X POST http://127.0.0.1/notes \
   -H "Content-Type: application/json" \
   -d '{"title":"Test note","content":"Hello"}'
+```
 
+---
 
-Reverse Proxy
+# Reverse Proxy
+
 Nginx works as a reverse proxy.
-Publicly available endpoints:
-/
-/notes
-/notes/<id>
-Health endpoints are not exposed through nginx.
 
+## Publicly available endpoints
 
-Database
-Database:
-MariaDB
-Database listens only on localhost.
+- `/`
+- `/notes`
+- `/notes/<id>`
 
+> Health endpoints are not exposed through nginx.
 
-Systemd
+---
 
-Application files:
-deploy/mywebapp.service
-deploy/mywebapp.socket
+# Database
 
-The application:
-runs as Linux user app
-automatically performs database migration before startup
-uses systemd socket activation
-runs through Gunicorn
+| Parameter | Value |
+|---|---|
+| Database | MariaDB |
+| Access | localhost only |
 
+---
 
-Deployment Files
+# Systemd
+
+## Application files
+
+- `deploy/mywebapp.service`
+- `deploy/mywebapp.socket`
+
+## The application
+
+- runs as Linux user `app`
+- automatically performs database migration before startup
+- uses systemd socket activation
+- runs through Gunicorn
+
+---
+
+# Deployment Files
 
 Project deployment files:
-deploy/install.sh
-deploy/mywebapp.service
-deploy/mywebapp.socket
-deploy/mywebapp.nginx
 
+- `deploy/install.sh`
+- `deploy/mywebapp.service`
+- `deploy/mywebapp.socket`
+- `deploy/mywebapp.nginx`
 
-Linux Users
+---
+
+# Linux Users
 
 The deployment script creates:
-student
-teacher
-operator
-app
+
+- `student`
+- `teacher`
+- `operator`
+- `app`
+
+## Operator permissions
+
 Operator user is allowed to execute only:
-status/restart/start/stop mywebapp
-reload nginx
 
+- `status/restart/start/stop mywebapp`
+- `reload nginx`
 
-Gradebook
+---
+
+# Gradebook
 
 The deployment script creates:
+
+```text
 /home/student/gradebook
-File content:
+```
+
+## File content
+
+```text
 12
+```
 
+---
 
-Repository
+# Repository
 
 Repository URL:
+
+```text
 https://github.com/ValMai12/DevOps-labs
+```
+
