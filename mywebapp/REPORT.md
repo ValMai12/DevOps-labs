@@ -574,3 +574,120 @@ Persistence було перевірено шляхом:
 - забезпечити reproducible builds
 - ізолювати сервіси один від одного
 - спростити масштабування та підтримку системи
+
+# Docker Compose Deployment
+
+The project can also be deployed using Docker Compose.
+
+---
+
+# Services
+
+Docker Compose starts 3 containers:
+
+- `web` — Flask + Gunicorn application
+- `db` — MariaDB database
+- `nginx` — reverse proxy
+
+---
+
+# Docker Network
+
+Containers communicate using a dedicated Docker bridge network:
+
+- `mywebapp_network`
+
+---
+
+# Persistent Storage
+
+Database data is stored in a Docker volume:
+
+- `mywebapp_db_data`
+
+The data survives:
+
+- container restart
+- `docker compose down`
+- system reboot
+
+---
+
+# Build and Run
+
+Run from the `mywebapp` directory:
+
+```bash
+docker compose up --build
+```
+
+---
+
+## Run in background
+
+```bash
+docker compose up -d
+```
+
+---
+
+## Stop containers
+
+```bash
+docker compose down
+```
+
+---
+
+# Verify Deployment
+
+## Check running containers
+
+```bash
+docker compose ps
+```
+
+---
+
+## Check root endpoint
+
+```bash
+curl http://localhost/
+```
+
+---
+
+## Check notes endpoint
+
+```bash
+curl http://localhost/notes
+```
+
+---
+
+## Check JSON response
+
+```bash
+curl -H "Accept: application/json" http://localhost/notes
+```
+
+---
+
+## Create note
+
+```bash
+curl -X POST http://localhost/notes \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Docker test","content":"Hello from Docker Compose"}'
+```
+
+---
+
+# Docker Files
+
+The Docker deployment uses:
+
+- `Dockerfile`
+- `docker-compose.yml`
+- `.dockerignore`
+- `nginx/mywebapp.conf`
