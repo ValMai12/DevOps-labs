@@ -16,6 +16,10 @@ jobs:
   lint-and-test:
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: mywebapp
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -46,4 +50,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
-          path: coverage.xml
+          path: mywebapp/coverage.xml
