@@ -1,9 +1,12 @@
 name: Deploy to Target VM
 
 on:
-  push:
-    tags:
-      - '*'
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "Docker image tag to deploy"
+        required: true
+        default: "latest"
 
 jobs:
   deploy:
@@ -22,7 +25,7 @@ jobs:
 
       - name: Deploy container on target
         run: |
-          IMAGE="ghcr.io/valmai12/devops-labs/mywebapp:stable"
+          IMAGE="ghcr.io/valmai12/devops-labs/mywebapp:${{ github.event.inputs.image_tag }}"
           ssh -i ~/.ssh/id_ed25519 student@192.168.64.13 "chmod +x /opt/mywebapp/deploy-container.sh /opt/mywebapp/verify.sh && /opt/mywebapp/deploy-container.sh $IMAGE"
 
       - name: Verify deployment
