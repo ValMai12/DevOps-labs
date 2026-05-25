@@ -17,10 +17,6 @@ jobs:
       contents: read
       packages: write
 
-    defaults:
-      run:
-        working-directory: mywebapp
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -30,6 +26,21 @@ jobs:
         run: |
           echo "repo=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
 
+      - name: Set Docker tags for branch
+        if: github.ref_type == 'branch'
+        id: branch_tags
+        run: |
+          echo "tags=ghcr.io/${{ steps.repo.outputs.repo }}/mywebapp:latest,ghcr.io/${{ steps.repo.outputs.repo }}/mywebapp:sha-${{ github.sha }}" >> $GITHUB_OUTPUT
+
+      - name: Set Docker tags for release tag
+        if: github.ref_type == 'tag'
+        id: release_tags
+        run: |
+          echo "tags=ghcr.io/${{ steps.repo.outputs.repo }}/mywebapp:stable,ghcr.io/${{ steps.repo.outputs.repo }}/mywebapp:${{ github.ref_name }}" >> $GITHUB_OUTPUT
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
         with:
@@ -37,30 +48,20 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build Docker image for branch
+      - name: Build and push Docker image for branch
         if: github.ref_type == 'branch'
-        run: |
-          docker build \
-            -t ghcr.io/${{ steps.repo.outputs.repo }}/mywebapp:latest \
-            -t ghcr.io/${{ steps.repo.outputs.repo }}/mywebapp:sha-${{ github.sha }} \
-            .
+        uses: docker/build-push-action@v6
+        with:
+          context: ./mywebapp
+          platforms: linux/arm64
+          push: true
+          tags: ${{ steps.branch_tags.outputs.tags }}
 
-      - name: Push Docker image for branch
-        if: github.ref_type == 'branch'
-        run: |
-          docker push ghcr.io/${{ steps.repo.outputs.repo }}/mywebapp:latest
-          docker push ghcr.io/${{ steps.repo.outputs.repo }}/mywebapp:sha-${{ github.sha }}
-
-      - name: Build Docker image for tag
+      - name: Build and push Docker image for tag
         if: github.ref_type == 'tag'
-        run: |
-          docker build \
-            -t ghcr.io/${{ steps.repo.outputs.repo }}/mywebapp:stable \
-            -t ghcr.io/${{ steps.repo.outputs.repo }}/mywebapp:${{ github.ref_name }} \
-            .
-
-      - name: Push Docker image for tag
-        if: github.ref_type == 'tag'
-        run: |
-          docker push ghcr.io/${{ steps.repo.outputs.repo }}/mywebapp:stable
-          docker push ghcr.io/${{ steps.repo.outputs.repo }}/mywebapp:${{ github.ref_name }}
+        uses: docker/build-push-action@v6
+        with:
+          context: ./mywebapp
+          platforms: linux/arm64
+          push: true
+          tags: ${{ steps.release_tags.outputs.tags }}
