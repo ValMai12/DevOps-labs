@@ -15,3 +15,4 @@ else
 fi
 
 echo "Verification successful!"
+echo "Verification successful!"
