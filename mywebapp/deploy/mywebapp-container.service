@@ -1,0 +1,13 @@
+[Unit]
+Description=MyWebApp Container
+After=docker.service
+Requires=docker.service
+
+[Service]
+Restart=always
+
+ExecStart=/usr/bin/docker start -a mywebapp-web
+ExecStop=/usr/bin/docker stop -t 2 mywebapp-web
+
+[Install]
+WantedBy=multi-user.target

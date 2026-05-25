@@ -1,0 +1,33 @@
+name: Deploy to Target VM
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "Docker image tag to deploy"
+        required: true
+        default: "latest"
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Prepare deployment files on target
+        run: |
+          ssh -i ~/.ssh/id_ed25519 student@192.168.64.13 "mkdir -p /opt/mywebapp"
+          scp -i ~/.ssh/id_ed25519 mywebapp/deploy/deploy-container.sh student@192.168.64.13:/opt/mywebapp/
+          scp -i ~/.ssh/id_ed25519 mywebapp/deploy/verify.sh student@192.168.64.13:/opt/mywebapp/
+          scp -i ~/.ssh/id_ed25519 mywebapp/deploy/mywebapp-container.service student@192.168.64.13:/opt/mywebapp/
+
+      - name: Deploy container on target
+        run: |
+          IMAGE="ghcr.io/valmai12/devops-labs/mywebapp:${{ github.event.inputs.image_tag }}"
+          ssh -i ~/.ssh/id_ed25519 student@192.168.64.13 "chmod +x /opt/mywebapp/deploy-container.sh /opt/mywebapp/verify.sh && /opt/mywebapp/deploy-container.sh $IMAGE"
+
+      - name: Verify deployment
+        run: |
+          ssh -i ~/.ssh/id_ed25519 student@192.168.64.13 "/opt/mywebapp/verify.sh"

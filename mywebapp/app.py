@@ -130,7 +130,7 @@ def get_note(note_id):
 @app.route("/notes", methods=["POST"])
 def create_note():
 
-    data = request.get_json()
+    data = request.get_json(silent=True)
 
     if not data:
         return {"error": "JSON body is required"}, 400
@@ -184,7 +184,10 @@ def load_config():
     config["db_host"] = args.db_host or os.getenv("MYWEBAPP_DB_HOST")
     config["db_port"] = args.db_port
     config["db_user"] = args.db_user or os.getenv("MYWEBAPP_DB_USER")
-    config["db_password"] = args.db_password or os.getenv("MYWEBAPP_DB_PASSWORD")
+    config["db_password"] = (
+        args.db_password
+        or os.getenv("MYWEBAPP_DB_PASSWORD")
+    )
     config["db_name"] = args.db_name or os.getenv("MYWEBAPP_DB_NAME")
 
     return args
