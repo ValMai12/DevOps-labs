@@ -10,5 +10,5 @@ terraform {
 }
 
 provider "libvirt" {
-  uri = "qemu+unix:///session?socket=/Users/valeriiamaievska/.cache/libvirt/libvirt-sock"
+  uri = "qemu+unix:///system?socket=/opt/homebrew/var/run/libvirt/libvirt-sock"
 }

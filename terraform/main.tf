@@ -3,18 +3,7 @@ resource "libvirt_pool" "lab4_pool" {
   type = "dir"
 
   target {
-    path = "${path.module}/images"
-  }
-}
-
-resource "libvirt_network" "lab4_network" {
-  name      = "lab4-network"
-  mode      = "nat"
-  domain    = "lab4.local"
-  addresses = ["192.168.56.0/24"]
-
-  dhcp {
-    enabled = true
+    path = "/opt/homebrew/var/lib/libvirt/images/lab4"
   }
 }
 
@@ -47,6 +36,11 @@ resource "libvirt_cloudinit_disk" "worker_cloudinit" {
     hostname               = "lab4-worker"
     student_ssh_public_key = var.student_ssh_public_key
   })
+
+  network_config = templatefile("${path.module}/network-config.yml", {
+    mac_address = "52:54:00:12:04:11"
+    ip_address  = "192.168.56.11/24"
+  })
 }
 
 resource "libvirt_cloudinit_disk" "db_cloudinit" {
@@ -57,52 +51,59 @@ resource "libvirt_cloudinit_disk" "db_cloudinit" {
     hostname               = "lab4-db"
     student_ssh_public_key = var.student_ssh_public_key
   })
+
+  network_config = templatefile("${path.module}/network-config.yml", {
+    mac_address = "52:54:00:12:04:12"
+    ip_address  = "192.168.56.12/24"
+  })
 }
 
 resource "libvirt_domain" "worker" {
-  name   = "lab4-worker"
-  memory = "2048"
-  vcpu   = 2
+  name    = "lab4-worker"
+  type    = "qemu"
+  machine = "virt"
+  memory  = "2048"
+  vcpu    = 2
 
   cloudinit = libvirt_cloudinit_disk.worker_cloudinit.id
 
   disk {
     volume_id = libvirt_volume.worker_disk.id
+    scsi      = true
   }
 
   network_interface {
-    network_id     = libvirt_network.lab4_network.id
-    hostname       = "lab4-worker"
-    wait_for_lease = true
+    bridge = "bridge100"
+    mac    = "52:54:00:12:04:11"
   }
 
-  console {
-    type        = "pty"
-    target_type = "serial"
-    target_port = "0"
+  xml {
+    xslt = file("${path.module}/cloudinit-cdrom-scsi.xsl")
   }
+
 }
 
 resource "libvirt_domain" "db" {
-  name   = "lab4-db"
-  memory = "2048"
-  vcpu   = 2
+  name    = "lab4-db"
+  type    = "qemu"
+  machine = "virt"
+  memory  = "2048"
+  vcpu    = 2
 
   cloudinit = libvirt_cloudinit_disk.db_cloudinit.id
 
   disk {
     volume_id = libvirt_volume.db_disk.id
+    scsi      = true
   }
 
   network_interface {
-    network_id     = libvirt_network.lab4_network.id
-    hostname       = "lab4-db"
-    wait_for_lease = true
+    bridge = "bridge100"
+    mac    = "52:54:00:12:04:12"
   }
 
-  console {
-    type        = "pty"
-    target_type = "serial"
-    target_port = "0"
+  xml {
+    xslt = file("${path.module}/cloudinit-cdrom-scsi.xsl")
   }
+
 }
