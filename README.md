@@ -5,6 +5,14 @@ IaC. Terraform. Ansible
 
 ПІБ: Маєвська Валерія Олександрівна, ІМ-41
 
+GitHub repository:
+
+https://github.com/ValMai12/DevOps-labs
+
+Гілка лабораторної роботи №4:
+
+https://github.com/ValMai12/DevOps-labs/tree/lab4
+
 ---
 
 # Мета роботи
