@@ -18,8 +18,8 @@
   user:
     name: operator
     shell: /bin/bash
-    groups: sudo
-    append: true
+    groups: users
+    append: false
     password: "{{ '12345678' | password_hash('sha512', 'lab4salt') }}"
 
 - name: Create application directory
