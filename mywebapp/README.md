@@ -1,7 +1,6 @@
 # mywebapp
 
 # Лабораторна робота №1 — Web service deployment with automation
-> Laboratory work №1: Web service deployment with automation.
 
 ---
 
