@@ -1,0 +1,10 @@
+variant_number: 12
+
+db_name: mywebapp
+db_user: mywebapp
+db_password: mypassword
+
+app_user: app
+
+worker_ip: 192.168.64.14
+db_ip: 192.168.64.15

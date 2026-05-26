@@ -1,0 +1,37 @@
+- name: Update apt cache
+  apt:
+    update_cache: yes
+
+- name: Install common packages
+  apt:
+    name:
+      - python3
+      - python3-pip
+      - python3-pymysql
+      - curl
+      - git
+    state: present
+
+- name: Create teacher user
+  user:
+    name: teacher
+    shell: /bin/bash
+    groups: sudo
+    append: true
+    password: "{{ '12345678' | password_hash('sha512') }}"
+
+- name: Create student directory
+  file:
+    path: /home/student
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Create gradebook file
+  copy:
+    dest: /home/student/gradebook
+    content: "{{ variant_number }}\n"
+    owner: root
+    group: root
+    mode: "0644"

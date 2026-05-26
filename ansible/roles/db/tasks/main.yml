@@ -1,0 +1,35 @@
+- name: Install MariaDB server
+  apt:
+    name:
+      - mariadb-server
+    state: present
+
+- name: Configure MariaDB bind address
+  template:
+    src: 50-server.cnf.j2
+    dest: /etc/mysql/mariadb.conf.d/50-server.cnf
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart MariaDB
+
+- name: Start and enable MariaDB
+  service:
+    name: mariadb
+    state: started
+    enabled: true
+
+- name: Create application database
+  community.mysql.mysql_db:
+    name: "{{ db_name }}"
+    state: present
+    login_unix_socket: /run/mysqld/mysqld.sock
+
+- name: Create application database user
+  community.mysql.mysql_user:
+    name: "{{ db_user }}"
+    password: "{{ db_password }}"
+    priv: "{{ db_name }}.*:ALL"
+    host: "{{ worker_ip }}"
+    state: present
+    login_unix_socket: /run/mysqld/mysqld.sock
