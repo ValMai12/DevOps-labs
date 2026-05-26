@@ -11,7 +11,7 @@ Environment=MYWEBAPP_DB_PORT=3306
 Environment=MYWEBAPP_DB_USER={{ db_user }}
 Environment=MYWEBAPP_DB_PASSWORD={{ db_password }}
 Environment=MYWEBAPP_DB_NAME={{ db_name }}
-ExecStartPre=/opt/mywebapp/venv/bin/python /opt/mywebapp/migrate.py
+ExecStartPre=/opt/mywebapp/venv/bin/python /opt/mywebapp/migrate.py --db-host {{ db_ip }} --db-port 3306 --db-user {{ db_user }} --db-password {{ db_password }} --db-name {{ db_name }}
 ExecStart=/opt/mywebapp/venv/bin/gunicorn app:app --bind 127.0.0.1:3000
 Restart=always
 

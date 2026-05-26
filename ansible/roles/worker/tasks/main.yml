@@ -30,13 +30,29 @@
     group: app
     mode: "0755"
 
-- name: Copy application files
+- name: Copy app.py
   copy:
-    src: ../../../mywebapp/
-    dest: /opt/mywebapp/
+    src: ../../../mywebapp/app.py
+    dest: /opt/mywebapp/app.py
     owner: app
     group: app
-    mode: preserve
+    mode: "0644"
+
+- name: Copy migrate.py
+  copy:
+    src: ../../../mywebapp/migrate.py
+    dest: /opt/mywebapp/migrate.py
+    owner: app
+    group: app
+    mode: "0644"
+
+- name: Copy requirements.txt
+  copy:
+    src: ../../../mywebapp/requirements.txt
+    dest: /opt/mywebapp/requirements.txt
+    owner: app
+    group: app
+    mode: "0644"
 
 - name: Create Python virtual environment
   command: python3 -m venv /opt/mywebapp/venv
