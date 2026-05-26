@@ -1,21 +1,33 @@
-# Laboratory work №3 — CI/CD
+# Лабораторна робота №3 — CI/CD
 
-## Goal
+## Мета роботи
 
-The goal of this laboratory work is to configure a full CI/CD pipeline for the application from Laboratory work №1.
+Метою даної лабораторної роботи є налаштування повного CI/CD pipeline для застосунку з Лабораторної роботи №1.
 
-The pipeline includes:
+Pipeline включає:
 
 - continuous integration
-- automated testing
-- Docker image build
-- Docker image publishing
-- deployment to a remote VM
-- deployment verification
+- автоматичне тестування
+- збірку Docker image
+- публікацію Docker image
+- розгортання на віддаленій віртуальній машині
+- verification-перевірку розгортання
 
 ---
 
-# Infrastructure
+# Посилання на репозиторій
+
+GitHub repository:
+
+https://github.com/ValMai12/DevOps-labs
+
+Гілка лабораторної роботи №3:
+
+https://github.com/ValMai12/DevOps-labs/tree/lab3
+
+---
+
+# Інфраструктура
 
 ## Runner VM
 
@@ -23,12 +35,12 @@ Self-hosted GitHub Actions runner:
 
 - Ubuntu 24.04.3 LTS
 - ARM64
-- UTM virtual machine
+- віртуальна машина UTM
 - GitHub Actions self-hosted runner
 
 ## Target VM
 
-Deployment target server:
+Сервер для deployment:
 
 - Ubuntu 24.04.3 LTS
 - ARM64
@@ -39,13 +51,13 @@ Deployment target server:
 
 # CI Pipeline
 
-The CI workflow performs:
+CI workflow виконує:
 
-- Python dependency installation
-- flake8 static analysis
-- pytest execution
+- встановлення Python-залежностей
+- статичний аналіз коду через flake8
+- запуск pytest
 
-Workflow file:
+Файл workflow:
 
 ```text
 .github/workflows/ci.yml
@@ -55,19 +67,19 @@ Workflow file:
 
 # Docker Build Pipeline
 
-The build workflow:
+Build workflow:
 
-- builds Docker images
-- pushes images to GitHub Container Registry
-- supports ARM64 platform
+- збирає Docker images
+- публікує images у GitHub Container Registry
+- підтримує ARM64 платформу
 
-Published image:
+Опублікований image:
 
 ```text
 ghcr.io/valmai12/devops-labs/mywebapp
 ```
 
-Workflow file:
+Файл workflow:
 
 ```text
 .github/workflows/build.yml
@@ -77,15 +89,15 @@ Workflow file:
 
 # Deployment Pipeline
 
-The deployment workflow:
+Deployment workflow:
 
-- copies deployment scripts to target VM
-- deploys MariaDB container
-- deploys web application container
-- configures nginx reverse proxy
-- verifies deployment automatically
+- копіює deployment scripts на target VM
+- розгортає контейнер MariaDB
+- розгортає контейнер вебзастосунку
+- налаштовує nginx reverse proxy
+- автоматично виконує verification deployment
 
-Workflow file:
+Файл workflow:
 
 ```text
 .github/workflows/deploy.yml
@@ -93,16 +105,16 @@ Workflow file:
 
 ---
 
-# Deployment Verification
+# Перевірка розгортання
 
-Verification script checks:
+Verification script перевіряє:
 
 - GET /
 - GET /notes
-- GET /health/alive directly on container
-- hidden health endpoint through nginx
+- GET /health/alive безпосередньо у контейнері
+- прихований health endpoint через nginx
 
-Verification file:
+Файл verification:
 
 ```text
 mywebapp/deploy/verify.sh
@@ -112,7 +124,7 @@ mywebapp/deploy/verify.sh
 
 # Self-hosted Runner
 
-Runner labels:
+Labels runner:
 
 ```text
 self-hosted
@@ -122,12 +134,12 @@ ARM64
 
 ---
 
-# Result
+# Результат
 
-The application was successfully:
+Застосунок було успішно:
 
-- tested
-- containerized
-- published to GitHub Container Registry
-- deployed automatically to a remote VM
-- verified after deployment
+- протестовано
+- контейнеризовано
+- опубліковано у GitHub Container Registry
+- автоматично розгорнуто на віддаленій віртуальній машині
+- перевірено після deployment
