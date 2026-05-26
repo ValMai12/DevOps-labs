@@ -1,0 +1,17 @@
+.DS_Store
+**/.DS_Store
+
+.terraform/
+*.tfstate
+*.tfstate.*
+terraform/.terraform.lock.hcl
+
+*.retry
+
+__pycache__/
+.pytest_cache/
+.venv/
+venv/
+
+deploy.lab-containers-starter-project-golang/
+lab-03-starter-project-python/
