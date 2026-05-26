@@ -1,6 +1,7 @@
 - name: Update apt cache
   apt:
     update_cache: yes
+    cache_valid_time: 3600
 
 - name: Install common packages
   apt:
@@ -18,7 +19,7 @@
     shell: /bin/bash
     groups: sudo
     append: true
-    password: "{{ '12345678' | password_hash('sha512') }}"
+    password: "{{ '12345678' | password_hash('sha512', 'lab4salt') }}"
 
 - name: Create student directory
   file:

@@ -20,7 +20,7 @@
     shell: /bin/bash
     groups: sudo
     append: true
-    password: "{{ '12345678' | password_hash('sha512') }}"
+    password: "{{ '12345678' | password_hash('sha512', 'lab4salt') }}"
 
 - name: Create application directory
   file:
@@ -94,11 +94,6 @@
     path: /etc/nginx/sites-enabled/default
     state: absent
   notify: Reload nginx
-
-- name: Ensure nginx is restarted after configuration changes
-  service:
-    name: nginx
-    state: restarted
 
 - name: Configure operator sudo permissions
   template:
